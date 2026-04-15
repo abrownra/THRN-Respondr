@@ -1398,7 +1398,7 @@ function renderCases(cases) {
     const [bg,fg]=AVCOLORS[i%AVCOLORS.length].split(',');
     const st=STATUSES[c.status]||STATUSES.open;
     const needs=parseNeeds(c.needs);
-    const pct=Math.min(100,Math.round(((c.day||0)/60)*100));
+    const pct=Math.min(100,Math.round((liveDay(c)/60)*100));
     const barColor=c.status==='averted'?'var(--green)':c.status==='archived'?'var(--text3)':pct>75?'var(--amber)':'var(--blue)';
     const init=(c.initials||initials(c.name)).toUpperCase();
     const enc=encodeURIComponent(JSON.stringify(c));
@@ -1407,7 +1407,7 @@ function renderCases(cases) {
         <div class="av" style="background:${bg};color:${fg}">${init}</div>
         <div style="flex:1;min-width:0">
           <div style="font-size:14px;font-weight:700;color:var(--text)">${c.name} <span class="pill ${st.pill}" style="margin-left:4px">${st.label}</span></div>
-          <div style="font-size:11px;color:var(--text2);margin-top:2px">${c.case_id||c.id?.slice(0,8)} · ${c.org} · Day ${c.day||0}/60</div>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px">${c.case_id||c.id?.slice(0,8)} · ${c.org} · Day ${liveDay(c)}/60</div>
         </div>
       </div>
       <div style="display:flex;gap:5px;flex-wrap:wrap">${needs.slice(0,2).map(n=>`<span class="pill pz">${n}</span>`).join('')}${needs.length>2?`<span class="pill pz">+${needs.length-2}</span>`:''}</div>
@@ -1424,7 +1424,7 @@ function renderFollowup(cases) {
   feed.innerHTML=urgent.slice(0,5).map((c,i)=>{
     const [bg,fg]=AVCOLORS[i%AVCOLORS.length].split(',');
     const init=(c.initials||initials(c.name)).toUpperCase();
-    const day=c.day||0;
+    const day=liveDay(c);
     const urgentBadge=day>30?'🔴 Urgent':'🟡 Open';
     return `<div class="ccard" onclick="openCaseById('${c.id}')">
       <div style="display:flex;align-items:center;gap:10px">
@@ -1876,7 +1876,7 @@ function tapActivity(caseId) {
 function updateStats() {
   const active=allIncidents.filter(i=>i.status==='active').length;
   const open=allCases.filter(c=>c.status!=='averted'&&c.status!=='archived').length;
-  const needAttn=allCases.filter(c=>c.status==='open'&&(c.day||0)>5).length;
+  const needAttn=allCases.filter(c=>c.status==='open'&&liveDay(c)>5).length;
   const avail=allResponders.filter(r=>r.status==='available').length;
   el('s-inc').textContent=active||'0'; el('s-inc-sub').textContent=`This week: ${allIncidents.length}`;
   el('s-cases').textContent=open||'0'; el('s-cases-sub').textContent=`${needAttn} need attention`;
@@ -1905,9 +1905,9 @@ function openCase(c) {
   el('cs-id').textContent=c.case_id||c.id?.slice(0,8)||'—';
   el('cs-inc').textContent=c.incident_ref||'—';
   el('cs-org').textContent=c.org||'—';
-  el('cs-day').textContent=c.day||0;
-  el('cs-prog').style.width=Math.min(100,Math.round(((c.day||0)/60)*100))+'%';
-  el('cs-rem').textContent=(60-(c.day||0))+' left';
+  el('cs-day').textContent=liveDay(c);
+  el('cs-prog').style.width=Math.min(100,Math.round((liveDay(c)/60)*100))+'%';
+  el('cs-rem').textContent=(60-liveDay(c))+' left';
   renderStatusBar(currentStatus);
   const contribs=Array.isArray(c.contributors)?c.contributors:(typeof c.contributors==='string'?JSON.parse(c.contributors||'[]'):[]);
   if(c.org&&!contribs.includes(c.org)) contribs.unshift(c.org);
@@ -2026,7 +2026,7 @@ function renderCompliance(c) {
     <div>🏢 Opened by: <strong>${c.org||'—'}</strong></div>
     <div>👥 Contributing orgs: <strong>${Math.max(contribs.length,1)}</strong>${contribs.length?' — '+contribs.join(', '):''}</div>
     <div>📋 Resources: <strong>${needs.join(', ')||'None selected'}</strong></div>
-    <div>⏱ Days: <strong>${c.day||0} of 60</strong></div>
+    <div>⏱ Days: <strong>${liveDay(c)} of 60</strong></div>
     <div>🔄 Status: <strong>${STATUSES[c.status]?.label||'Open'}</strong></div>
     <div style="margin-top:8px;font-size:10px;color:var(--text3);border-top:0.5px solid var(--border);padding-top:6px">All interactions timestamped with org, date, resource type — synced for RHHD compliance. See Reports for network-wide totals.</div>`;
 }
@@ -2485,13 +2485,13 @@ function renderCaseOutcomes() {
   const archived = allCases.filter(c => c.status==='archived').length;
 
   // Cases closed within 60 days (averted or archived with day <= 60)
-  const closed60 = allCases.filter(c => (c.status==='averted'||c.status==='archived') && (c.day||0)<=60).length;
+  const closed60 = allCases.filter(c => (c.status==='averted'||c.status==='archived') && liveDay(c)<=60).length;
   const closedTotal = allCases.filter(c => c.status==='averted'||c.status==='archived').length;
   const pct60 = closedTotal ? Math.round((closed60/closedTotal)*100) : 0;
 
   // Average days in program for closed cases
   const closedCases = allCases.filter(c => c.status==='averted'||c.status==='archived');
-  const avgDays = closedCases.length ? Math.round(closedCases.reduce((s,c)=>s+(c.day||0),0)/closedCases.length) : 0;
+  const avgDays = closedCases.length ? Math.round(closedCases.reduce((s,c)=>s+liveDay(c),0)/closedCases.length) : 0;
 
   // Multi-org cases
   const multiOrg = allCases.filter(c => {
@@ -2644,9 +2644,9 @@ function getLiveMetrics(cases, incidents, events) {
   const open         = cases.filter(c=>c.status==='open').length;
   const archived     = cases.filter(c=>c.status==='archived').length;
   const closedCases  = cases.filter(c=>c.status==='averted'||c.status==='archived');
-  const closed60     = closedCases.filter(c=>(c.day||0)<=60).length;
+  const closed60     = closedCases.filter(c=>liveDay(c)<=60).length;
   const pct60        = closedCases.length ? Math.round((closed60/closedCases.length)*100) : 0;
-  const avgDays      = closedCases.length ? Math.round(closedCases.reduce((s,c)=>s+(c.day||0),0)/closedCases.length) : 0;
+  const avgDays      = closedCases.length ? Math.round(closedCases.reduce((s,c)=>s+liveDay(c),0)/closedCases.length) : 0;
   const multiOrg     = cases.filter(c=>{const co=Array.isArray(c.contributors)?c.contributors:JSON.parse(c.contributors||'[]');return co.length>1;}).length;
   const multiOrgPct  = total ? Math.round((multiOrg/total)*100) : 0;
   const totalAtt     = events.filter(e=>e.status==='completed').reduce((s,e)=>s+(e.attendance||0),0);
@@ -2693,7 +2693,7 @@ function exportCSV() {
       contribs.join('; '),
       c.consent_given ? 'Yes' : 'No',
       STATUSES[c.status]?.label || c.status || '',
-      c.day || 0,
+      liveDay(c),
       c.created_at ? new Date(c.created_at).toLocaleDateString('en-US') : ''
     ];
   });
@@ -2724,7 +2724,7 @@ function exportExcel() {
         contribs.join(', '),
         c.consent_given ? 'Yes' : 'No',
         STATUSES[c.status]?.label || c.status,
-        c.day || 0,
+        liveDay(c),
         c.created_at ? new Date(c.created_at).toLocaleDateString('en-US') : '',
         c.notes_initial || ''
       ];
@@ -2895,7 +2895,7 @@ function buildCompliancePDF(isYTD) {
       activeCases.forEach(c => {
         x = 14;
         doc.setFont('helvetica','normal'); doc.setTextColor(26,26,26);
-        [c.case_id||'', c.name||'', c.org||'', String(c.day||0), STATUSES[c.status]?.label||c.status||''].forEach((v,i) => {
+        [c.case_id||'', c.name||'', c.org||'', String(liveDay(c)), STATUSES[c.status]?.label||c.status||''].forEach((v,i) => {
           doc.text(String(v).slice(0,22), x, y+5); x += cw[i];
         });
         y += 8;
@@ -3372,6 +3372,7 @@ function closeHMenuOnOverlay(e){if(e.target.id==='hmenu')closeHMenu();}
 
 function toast(msg,dur=2800){const t=el('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
 function timeAgo(ts){if(!ts)return'—';const d=(Date.now()-new Date(ts))/1000;if(d<60)return'just now';if(d<3600)return Math.floor(d/60)+' min ago';if(d<86400)return Math.floor(d/3600)+' hr ago';return Math.floor(d/86400)+' days ago';}
+function liveDay(c){if(c.created_at)return Math.max(0,Math.floor((Date.now()-new Date(c.created_at))/86400000));return c.day||0;}
 function today(){return new Date().toISOString().slice(0,10);}
 function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();}
 function el(id){return document.getElementById(id);}
