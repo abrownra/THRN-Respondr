@@ -2224,7 +2224,7 @@ function renderEvents(events) {
 
 function setEvTab(tab,filter){document.querySelectorAll('#view-events .ttab').forEach(t=>t.classList.remove('on'));tab.classList.add('on');currentEvStatus=filter;applyEvFilters();}
 function filterEvType(btn,type){document.querySelectorAll('.ev-type-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');currentEvType=type;applyEvFilters();}
-function applyEvFilters(){let f=allEvents;if(currentEvStatus!=='all')f=f.filter(e=>e.status===currentEvStatus);if(currentEvType)f=f.filter(e=>e.event_type===currentEvType);renderEvents(f);}
+function applyEvFilters(){const today=new Date().toISOString().slice(0,10);let f=allEvents;if(currentEvStatus==='upcoming')f=f.filter(e=>e.event_date>=today&&e.status!=='completed');else if(currentEvStatus==='completed')f=f.filter(e=>e.status==='completed'||e.event_date<today);if(currentEvType)f=f.filter(e=>e.event_type===currentEvType);renderEvents(f);}
 
 function toggleOtherField(){
   const item=el('ne-other-item'); const field=el('ne-other-text');
