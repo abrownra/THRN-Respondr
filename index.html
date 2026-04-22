@@ -1885,7 +1885,7 @@ function updateStats() {
   el('s-cases').textContent=open||'0'; el('s-cases-sub').textContent=`${needAttn} need attention`;
   el('s-resp').textContent=avail||'0'; el('s-resp-sub').textContent=`of ${allResponders.length} responders`;
   const fam=el('r-fam'); if(fam) fam.textContent=allCases.length;
-  if(active||needAttn){const b=el('hbadge');b.textContent=active+needAttn;b.style.display='flex';el('notifbadge').style.display='block';const parts=[];if(active)parts.push(`${active} active incident${active!==1?'s':''}`);if(needAttn)parts.push(`${needAttn} case${needAttn!==1?'s':''} open 5+ days`);b.title=parts.join(' · ');}
+  if(active||needAttn){const b=el('hbadge');b.textContent=active+needAttn;b.style.display='flex';const parts=[];if(active)parts.push(`${active} active incident${active!==1?'s':''}`);if(needAttn)parts.push(`${needAttn} case${needAttn!==1?'s':''} open 5+ days`);b.title=parts.join(' · ');}
 }
 
 // ============================================================
