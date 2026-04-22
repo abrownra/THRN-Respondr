@@ -1332,7 +1332,10 @@ async function loadEvents() {
   try {
     const {data,error}=await sb.from('events').select('*, event_photos(*)').order('event_date',{ascending:false});
     if(error) throw error;
-    allEvents=(data||[]).map(e=>({...e,photos:e.event_photos||[]}));
+    const today=new Date().toISOString().slice(0,10);
+    const stale=(data||[]).filter(e=>e.status==='upcoming'&&e.event_date<today).map(e=>e.id);
+    if(stale.length) await sb.from('events').update({status:'completed'}).in('id',stale);
+    allEvents=(data||[]).map(e=>({...e,status:(stale.includes(e.id)?'completed':e.status),photos:e.event_photos||[]}));
     renderEvents(allEvents); renderEventReport(); renderCalendar(); renderGallery(); return;
   } catch(e) {useDemoEvents();}
 }
