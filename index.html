@@ -1336,7 +1336,7 @@ async function loadEvents() {
     const stale=(data||[]).filter(e=>e.status==='upcoming'&&e.event_date<today).map(e=>e.id);
     if(stale.length) await sb.from('events').update({status:'completed'}).in('id',stale);
     allEvents=(data||[]).map(e=>({...e,status:(stale.includes(e.id)?'completed':e.status),photos:e.event_photos||[]}));
-    renderEvents(allEvents); renderEventReport(); renderCalendar(); renderGallery(); return;
+    applyEvFilters(); renderEventReport(); renderCalendar(); renderGallery(); return;
   } catch(e) {useDemoEvents();}
 }
 
@@ -2288,7 +2288,7 @@ async function saveEvent() {
   } else {
     if(editId){const idx=allEvents.findIndex(e=>e.id===editId);if(idx>=0)allEvents[idx]={...allEvents[idx],...evData};}
     else{allEvents.unshift({...evData,id:'local-'+Date.now(),photos:[]});}
-    renderEvents(allEvents); renderEventReport(); renderCalendar();
+    applyEvFilters(); renderEventReport(); renderCalendar();
   }
   toast('✓ Event saved');
 }
