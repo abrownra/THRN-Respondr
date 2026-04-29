@@ -829,6 +829,33 @@ textarea.fi{resize:none}
   </div>
 </div></div>
 
+<!-- Add Resource Modal -->
+<div class="overlay" id="add-resource-sheet" onclick="overlayClose(event,'add-resource-sheet')">
+<div class="sheet">
+  <div class="shdl"></div>
+  <div class="shh">
+    <button class="btnback" onclick="closeSheet('add-resource-sheet')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15,18 9,12 15,6"/></svg>Back</button>
+    <div class="sht">Add resources</div>
+    <button class="shx" onclick="closeSheet('add-resource-sheet')">✕</button>
+  </div>
+  <div class="sheet-scroll"><div class="shb">
+    <div style="font-size:12px;color:var(--text2);margin-bottom:12px">Select additional resources to add to this case's follow-up checklist.</div>
+    <div style="display:flex;flex-direction:column;gap:8px" id="ar-resources">
+      <div class="ritem" onclick="togR(this)"><div class="rchk"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4,8 11,1"/></svg></div><span class="rname">Emergency Relief Funds</span></div>
+      <div class="ritem" onclick="togR(this)"><div class="rchk"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4,8 11,1"/></svg></div><span class="rname">Grief / Loss support</span></div>
+      <div class="ritem" onclick="togR(this)"><div class="rchk"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4,8 11,1"/></svg></div><span class="rname">Mental Health Support</span></div>
+      <div class="ritem" onclick="togR(this)"><div class="rchk"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4,8 11,1"/></svg></div><span class="rname">Educational or School-Based Support</span></div>
+      <div class="ritem" onclick="togR(this)"><div class="rchk"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4,8 11,1"/></svg></div><span class="rname">Respite or safe housing outside of immediate area</span></div>
+      <div class="ritem" onclick="togR(this)"><div class="rchk"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4,8 11,1"/></svg></div><span class="rname">Family is unsure at this time</span></div>
+      <div class="ritem" onclick="togR(this)"><div class="rchk"><svg viewBox="0 0 12 10" fill="none"><polyline points="1,5 4,8 11,1"/></svg></div><span class="rname">Other</span></div>
+    </div>
+  </div></div>
+  <div class="shf">
+    <button class="btns" onclick="closeSheet('add-resource-sheet')">Cancel</button>
+    <button class="btnp" onclick="addCaseResources()">Add to checklist</button>
+  </div>
+</div></div>
+
 <!-- Case detail -->
 <div class="overlay" id="case-sheet" onclick="overlayClose(event,'case-sheet')">
 <div class="sheet">
@@ -881,6 +908,7 @@ textarea.fi{resize:none}
       <div class="fl" style="margin-bottom:4px">Resource follow-up checklist</div>
       <div style="font-size:11px;color:var(--text3);margin-bottom:10px">Tap each resource when it has been administered.</div>
       <div id="cs-checklist" style="display:flex;flex-direction:column;gap:6px"></div>
+      <button class="btns" style="margin-top:10px;font-size:12px;padding:8px 14px" onclick="openAddResourceModal()">+ Add resource</button>
     </div>
     <div class="fg">
       <div class="fl" style="margin-bottom:8px">Request help from a partner org</div>
@@ -2017,6 +2045,41 @@ async function sendReferral() {
 function renderCaseContacts() {
   const c=el('cs-contacts'); if(!c) return;
   c.innerHTML=PARTNERS.slice(0,8).map(p=>`<a href="mailto:${p.email}?subject=THRN Case Coordination" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;background:rgba(0,0,0,0.05);border:0.5px solid var(--border);color:var(--text2);text-decoration:none;white-space:nowrap">✉ ${p.name.split(' ').slice(0,3).join(' ')}</a>`).join('');
+}
+
+function openAddResourceModal() {
+  // Reset all selections
+  document.querySelectorAll('#ar-resources .ritem.on').forEach(e=>e.classList.remove('on'));
+  // Grey out resources already on the case
+  const existing=parseNeeds(currentCaseData?.needs);
+  document.querySelectorAll('#ar-resources .ritem').forEach(item=>{
+    const name=item.querySelector('.rname')?.textContent;
+    if(existing.includes(name)){item.classList.add('on');item.style.opacity='0.4';item.style.pointerEvents='none';}
+    else{item.style.opacity='';item.style.pointerEvents='';}
+  });
+  openSheet('add-resource-sheet');
+}
+
+async function addCaseResources() {
+  const selected=[...document.querySelectorAll('#ar-resources .ritem.on')].map(i=>i.querySelector('.rname')?.textContent).filter(Boolean);
+  const existing=parseNeeds(currentCaseData?.needs);
+  // Only add ones not already there
+  const toAdd=selected.filter(r=>!existing.includes(r));
+  if(!toAdd.length){toast('No new resources selected');return;}
+  const merged=JSON.stringify([...existing,...toAdd]);
+  closeSheet('add-resource-sheet');
+  if(sb&&currentCaseId){
+    const{error}=await sb.from('cases').update({needs:merged,updated_at:new Date().toISOString()}).eq('id',currentCaseId);
+    if(error){toast('Error: '+error.message);return;}
+    currentCaseData={...currentCaseData,needs:merged};
+    await loadCases();
+  } else if(currentCaseData){
+    currentCaseData={...currentCaseData,needs:merged};
+    const idx=allCases.findIndex(c=>c.id===currentCaseId);
+    if(idx>=0) allCases[idx].needs=merged;
+  }
+  renderChecklist(currentCaseData);
+  toast('✓ Resources added to checklist');
 }
 
 function renderCompliance(c) {
