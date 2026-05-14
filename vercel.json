@@ -1,3 +1,5 @@
 {
-  "cleanUrls": true
+  "routes": [
+    { "src": "/admin", "dest": "/admin.html" }
+  ]
 }
