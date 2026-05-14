@@ -310,6 +310,29 @@ textarea.fi{resize:none}
 .gallery-img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:var(--radius-sm);cursor:pointer}
 .gallery-placeholder{width:100%;aspect-ratio:1;border-radius:var(--radius-sm);background:rgba(0,0,0,0.04);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;color:var(--text3);font-size:11px;border:1.5px dashed var(--border2);cursor:pointer}
 
+/* AUTH SCREENS */
+.auth-screen{position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,#1a1a1a 0%,#111 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;padding-top:calc(24px + var(--safe-top));padding-bottom:calc(24px + var(--safe-bottom))}
+.auth-screen.hidden{display:none}
+.auth-logo{font-size:30px;font-weight:800;color:#fff;margin-bottom:4px;letter-spacing:-0.5px}
+.auth-logo span{color:var(--accent)}
+.auth-sub{font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:32px;text-align:center;letter-spacing:0.03em}
+.auth-card{width:100%;max-width:360px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius);padding:24px}
+.auth-title{font-size:18px;font-weight:700;color:#fff;margin-bottom:4px}
+.auth-desc{font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:20px;line-height:1.5}
+.auth-fi{width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-xs);padding:12px 14px;font-size:14px;color:#fff;font-family:inherit;margin-bottom:12px;outline:none;-webkit-appearance:none}
+.auth-fi::placeholder{color:rgba(255,255,255,0.22)}
+.auth-fi:focus{border-color:var(--accent);background:rgba(255,255,255,0.09)}
+.auth-btn{width:100%;background:var(--accent);border:none;border-radius:var(--radius-xs);padding:14px;font-size:14px;font-weight:700;color:var(--navy);font-family:inherit;cursor:pointer;margin-top:4px;letter-spacing:0.01em}
+.auth-btn:active{opacity:0.85}
+.auth-link{background:none;border:none;color:var(--accent);font-size:13px;font-family:inherit;cursor:pointer;padding:14px 0 0;display:block;text-align:center;width:100%}
+.auth-back{background:none;border:none;color:rgba(255,255,255,0.35);font-size:13px;font-family:inherit;cursor:pointer;padding:0 0 12px;display:block;text-align:center;width:100%}
+.auth-msg{font-size:12px;margin-top:-4px;margin-bottom:10px;display:none;padding:8px 10px;border-radius:var(--radius-xs)}
+.auth-msg.err{display:block;color:#ff3b30;background:rgba(255,59,48,0.1)}
+.auth-msg.ok{display:block;color:var(--green);background:rgba(52,199,89,0.1)}
+.hmenu-user{padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.05)}
+.hmenu-user-name{font-size:13px;font-weight:600;color:#fff}
+.hmenu-user-org{font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px}
+
 /* HAMBURGER MENU */
 .hmenu-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:150;display:none;align-items:flex-start;justify-content:flex-start}
 .hmenu-overlay.open{display:flex;animation:fin 0.2s ease}
@@ -336,6 +359,67 @@ textarea.fi{resize:none}
 </style>
 </head>
 <body>
+
+<!-- LOGIN SCREEN -->
+<div class="auth-screen" id="login-screen">
+  <div class="auth-logo">THRN <span>Respondr</span></div>
+  <div class="auth-sub">TRAUMA HEALING RESPONSE NETWORK — RICHMOND</div>
+  <div class="auth-card">
+    <div class="auth-title">Sign in</div>
+    <div class="auth-desc" id="login-desc">Enter your organization email to continue.</div>
+    <div class="auth-msg" id="login-msg"></div>
+    <!-- Step 1: email -->
+    <div id="login-step1">
+      <input class="auth-fi" id="login-email" type="email" placeholder="Email address" autocomplete="email" onkeydown="if(event.key==='Enter')loginContinue()"/>
+      <button class="auth-btn" onclick="loginContinue()">Continue</button>
+    </div>
+    <!-- Step 2: password (shown after email validated) -->
+    <div id="login-step2" style="display:none">
+      <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <span id="login-email-show" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+        <button onclick="loginBack()" style="background:none;border:none;color:var(--accent);font-size:11px;font-family:inherit;cursor:pointer;padding:0;flex-shrink:0">Change</button>
+      </div>
+      <input class="auth-fi" id="login-pass" type="password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()"/>
+      <button class="auth-btn" onclick="login()">Sign in</button>
+      <div style="display:flex;align-items:center;gap:10px;margin:14px 0 2px">
+        <div style="flex:1;height:1px;background:rgba(255,255,255,0.1)"></div>
+        <span style="font-size:10px;color:rgba(255,255,255,0.22);letter-spacing:0.05em">OR</span>
+        <div style="flex:1;height:1px;background:rgba(255,255,255,0.1)"></div>
+      </div>
+      <button class="auth-link" onclick="loginFirstTime()" style="margin-top:8px">First time? Send me a sign-in link</button>
+      <button class="auth-link" onclick="showAuthScreen('forgot-screen')" style="margin-top:2px;opacity:0.65;font-size:11px">Forgot password?</button>
+    </div>
+  </div>
+</div>
+
+<!-- FORGOT PASSWORD SCREEN -->
+<div class="auth-screen hidden" id="forgot-screen">
+  <div class="auth-logo">THRN <span>Respondr</span></div>
+  <div class="auth-sub">PASSWORD RESET</div>
+  <div class="auth-card">
+    <div class="auth-title">Reset your password</div>
+    <div class="auth-desc">Enter your email and we'll send a link to set a new password.</div>
+    <div class="auth-msg" id="forgot-msg"></div>
+    <input class="auth-fi" id="forgot-email" type="email" placeholder="Email address" autocomplete="email"/>
+    <button class="auth-btn" onclick="forgotPassword()">Send reset link</button>
+    <button class="auth-back" onclick="showAuthScreen('login-screen')">← Back to sign in</button>
+  </div>
+</div>
+
+<!-- SET NEW PASSWORD SCREEN -->
+<div class="auth-screen hidden" id="setpass-screen">
+  <div class="auth-logo">THRN <span>Respondr</span></div>
+  <div class="auth-sub" id="setpass-sub">WELCOME TO THRN</div>
+  <div class="auth-card">
+    <div class="auth-title" id="setpass-title">Create your password</div>
+    <div class="auth-desc">Choose a strong password (minimum 8 characters) to secure your account.</div>
+    <div class="auth-msg" id="setpass-msg"></div>
+    <input class="auth-fi" id="setpass-pass" type="password" placeholder="New password" autocomplete="new-password"/>
+    <input class="auth-fi" id="setpass-confirm" type="password" placeholder="Confirm password" autocomplete="new-password" onkeydown="if(event.key==='Enter')setNewPassword()"/>
+    <button class="auth-btn" onclick="setNewPassword()">Save password & sign in</button>
+  </div>
+</div>
+
 <div id="app">
 
 <!-- TOPBAR -->
@@ -557,6 +641,10 @@ textarea.fi{resize:none}
       <div class="hmenu-logo">THRN <span>Richmond</span></div>
       <button class="hmenu-close" onclick="closeHMenu()">✕</button>
     </div>
+    <div class="hmenu-user">
+      <div class="hmenu-user-name" id="hmenu-user-email">—</div>
+      <div class="hmenu-user-org" id="hmenu-user-org">—</div>
+    </div>
     <div class="hmenu-section">Community</div>
     <div class="hmenu-item" onclick="closeHMenu();openSheet('calendar-sheet')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -575,8 +663,66 @@ textarea.fi{resize:none}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       Compliance & Reports
     </div>
+    <div class="hmenu-section">Account</div>
+    <div class="hmenu-item" onclick="closeHMenu();openInviteSheet()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+      Invite organization
+    </div>
+    <div class="hmenu-item" onclick="closeHMenu();openSheet('chpass-sheet')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      Change password
+    </div>
+    <div class="hmenu-item" onclick="logout()" style="color:rgba(255,100,100,0.85)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign out
+    </div>
   </div>
 </div>
+
+<!-- Invite Organization Sheet -->
+<div class="overlay" id="invite-sheet" onclick="overlayClose(event,'invite-sheet')">
+<div class="sheet">
+  <div class="shdl"></div>
+  <div class="shh">
+    <button class="btnback" onclick="closeSheet('invite-sheet')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15,18 9,12 15,6"/></svg>Back</button>
+    <div class="sht">Invite organization</div>
+    <button class="shx" onclick="closeSheet('invite-sheet')">✕</button>
+  </div>
+  <div class="sheet-scroll"><div class="shb">
+    <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px">The contact will receive an email with a link to create their password and access the THRN Respondr network.</div>
+    <div class="auth-msg" id="inv-msg" style="border-radius:var(--radius-xs);padding:10px 12px;margin-bottom:12px;font-size:13px"></div>
+    <div class="fg"><label class="fl">Contact email</label><input class="fi" type="email" id="inv-email" placeholder="contact@organization.org"/></div>
+    <div class="fg">
+      <label class="fl">Organization</label>
+      <select class="fi" id="inv-org"><option value="">Select organization…</option></select>
+    </div>
+  </div></div>
+  <div class="shf">
+    <button class="btns" onclick="closeSheet('invite-sheet')">Cancel</button>
+    <button class="btnp" onclick="sendInvite()">Send invite</button>
+  </div>
+</div></div>
+
+<!-- Change Password Sheet -->
+<div class="overlay" id="chpass-sheet" onclick="overlayClose(event,'chpass-sheet')">
+<div class="sheet">
+  <div class="shdl"></div>
+  <div class="shh">
+    <button class="btnback" onclick="closeSheet('chpass-sheet')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15,18 9,12 15,6"/></svg>Back</button>
+    <div class="sht">Change password</div>
+    <button class="shx" onclick="closeSheet('chpass-sheet')">✕</button>
+  </div>
+  <div class="sheet-scroll"><div class="shb">
+    <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:4px">Choose a new password for your account. Must be at least 8 characters.</div>
+    <div class="auth-msg" id="chpass-msg" style="border-radius:var(--radius-xs);padding:10px 12px;font-size:13px"></div>
+    <div class="fg"><label class="fl">New password</label><input class="fi" type="password" id="chpass-new" placeholder="New password (min 8 characters)" autocomplete="new-password"/></div>
+    <div class="fg"><label class="fl">Confirm new password</label><input class="fi" type="password" id="chpass-confirm" placeholder="Confirm new password" autocomplete="new-password"/></div>
+  </div></div>
+  <div class="shf">
+    <button class="btns" onclick="closeSheet('chpass-sheet')">Cancel</button>
+    <button class="btnp" onclick="changePassword()">Update password</button>
+  </div>
+</div></div>
 
 <!-- ===== SHEETS ===== -->
 
@@ -1273,7 +1419,7 @@ async function retryConn() {
   const feed = el('gvafeed');
   if (feed) feed.innerHTML = '<div class="lrow"><div class="spin"></div><span>Connecting…</span></div>';
   setConn('connecting');
-  await initSupabase();
+  await loadApp();
 }
 
 function setConn(state) {
@@ -1884,8 +2030,9 @@ function renderOrgList() {
 // ============================================================
 function renderActivity(items) {
   const feed=el('actfeed'); if(!feed) return;
-  if(!items.length){feed.innerHTML='<div class="lrow">No activity yet</div>';return;}
-  feed.innerHTML=items.map(a=>{
+  const filtered=items.filter(a=>a.type!=='login');
+  if(!filtered.length){feed.innerHTML='<div class="lrow">No activity yet</div>';return;}
+  feed.innerHTML=filtered.map(a=>{
     const caseMatch=a.message?.match(/CAM-\d+/);
     const caseId=caseMatch?caseMatch[0]:null;
     return `<div class="fitem" ${caseId?`onclick="tapActivity('${caseId}')"`:`onclick=""`} style="${caseId?'cursor:pointer':''}">
@@ -3611,8 +3758,252 @@ async function initSW(){
   }catch(e){}
 }
 
-window.addEventListener('online',()=>{setConn('live');initSupabase();});
+window.addEventListener('online',()=>{setConn('live');if(currentUser)loadApp();});
 window.addEventListener('offline',()=>setConn('offline'));
+
+// ============================================================
+// AUTH
+// ============================================================
+let currentUser = null;
+
+function showAuthScreen(id) {
+  ['login-screen','forgot-screen','setpass-screen'].forEach(s => el(s)?.classList.toggle('hidden', s !== id));
+}
+
+function hideAuthScreens() {
+  ['login-screen','forgot-screen','setpass-screen'].forEach(s => el(s)?.classList.add('hidden'));
+}
+
+function authMsg(elId, type, text) {
+  const m = el(elId); if(!m) return;
+  m.className = 'auth-msg ' + type;
+  m.textContent = text;
+}
+
+// Two-step login helpers
+function loginContinue() {
+  const email = el('login-email')?.value?.trim();
+  el('login-msg').className = 'auth-msg';
+  if (!email) { authMsg('login-msg','err','Enter your email address.'); return; }
+  const partner = PARTNERS.find(p => p.email.toLowerCase() === email.toLowerCase());
+  if (!partner) {
+    authMsg('login-msg','err','This email is not registered with THRN. Contact your administrator.');
+    return;
+  }
+  el('login-email-show').textContent = email;
+  el('login-step1').style.display = 'none';
+  el('login-step2').style.display = 'block';
+  el('login-desc').textContent = 'Welcome back, ' + partner.contact.split(' ')[0] + '.';
+  el('login-msg').className = 'auth-msg';
+  setTimeout(() => el('login-pass')?.focus(), 80);
+}
+
+function loginBack() {
+  el('login-step1').style.display = 'block';
+  el('login-step2').style.display = 'none';
+  el('login-desc').textContent = 'Enter your organization email to continue.';
+  el('login-msg').className = 'auth-msg';
+  el('login-pass').value = '';
+  setTimeout(() => el('login-email')?.focus(), 80);
+}
+
+async function loginFirstTime() {
+  const email = el('login-email')?.value?.trim();
+  el('login-msg').className = 'auth-msg';
+  if (!email) return;
+  authMsg('login-msg','','Sending sign-in link…');
+  const partner = PARTNERS.find(p => p.email.toLowerCase() === email.toLowerCase());
+  const { error } = await sb.auth.signInWithOtp({
+    email,
+    options: { shouldCreateUser: true, data: { org: partner?.name || '' } }
+  });
+  if (error) { authMsg('login-msg','err', error.message); return; }
+  authMsg('login-msg','ok','Check your email — we sent you a sign-in link.');
+}
+
+async function initAuth() {
+  sb = supabase.createClient(SB_URL, SB_KEY);
+
+  // Detect token types in URL hash
+  const hash = window.location.hash;
+  const isRecovery  = hash.includes('type=recovery');
+  const isInvite    = hash.includes('type=invite');
+  const isMagicLink = hash.includes('type=magiclink') || (hash.includes('access_token=') && !isRecovery && !isInvite);
+
+  if (isRecovery) {
+    el('setpass-title').textContent = 'Set new password';
+    el('setpass-sub').textContent   = 'PASSWORD RESET';
+    showAuthScreen('setpass-screen');
+  } else if (isInvite) {
+    showAuthScreen('setpass-screen');
+  } else if (isMagicLink) {
+    // Supabase will exchange the token and fire SIGNED_IN via onAuthStateChange — just wait
+  } else {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) {
+      currentUser = session.user;
+      if (!session.user.user_metadata?.has_password) {
+        el('setpass-title').textContent = 'Create your password';
+        el('setpass-sub').textContent   = 'SECURE YOUR ACCOUNT';
+        showAuthScreen('setpass-screen');
+      } else {
+        hideAuthScreens();
+        await loadApp();
+      }
+    } else {
+      showAuthScreen('login-screen');
+    }
+  }
+
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      currentUser = session.user;
+      // First-time user — has no password set yet
+      if (!session.user.user_metadata?.has_password) {
+        el('setpass-title').textContent = 'Create your password';
+        el('setpass-sub').textContent   = 'SECURE YOUR ACCOUNT';
+        showAuthScreen('setpass-screen');
+      } else {
+        hideAuthScreens();
+        await loadApp();
+      }
+    } else if (event === 'USER_UPDATED' && session) {
+      currentUser = session.user;
+      hideAuthScreens();
+      await loadApp();
+    } else if (event === 'SIGNED_OUT') {
+      currentUser = null;
+      showAuthScreen('login-screen');
+    }
+  });
+}
+
+async function loadApp() {
+  const email = currentUser?.email || '';
+  const org   = currentUser?.user_metadata?.org || PARTNERS.find(p => p.email === email)?.name || '';
+  if (el('hmenu-user-email')) el('hmenu-user-email').textContent = email;
+  if (el('hmenu-user-org'))   el('hmenu-user-org').textContent   = org || 'THRN Network';
+
+  // Track login for admin visibility (silently)
+  try {
+    const orgName = org || PARTNERS.find(p => p.email === email)?.name;
+    if (orgName) {
+      sb.from('activity').insert([{
+        org: orgName,
+        org_color: '#5ac8fa',
+        message: `${orgName} signed in`,
+        type: 'login'
+      }]).then(()=>{}).catch(()=>{});
+    }
+  } catch(e) {}
+
+  renderOrgList();
+  populateAllSelects();
+  const dateInput = el('ne-date'); if (dateInput) dateInput.value = today();
+
+  try {
+    const testPromise    = sb.from('cases').select('count', {count:'exact', head:true});
+    const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 10000));
+    const { error } = await Promise.race([testPromise, timeoutPromise]);
+    if (error) throw error;
+    setConn('live');
+    await Promise.all([loadCases(), loadIncidents(), loadResponders(), loadActivity(), loadEvents(), loadSafeZone()]);
+    subscribeRealtime();
+  } catch(e) {
+    console.warn('Supabase:', e.message);
+    setConn('offline');
+    showRetry();
+  }
+}
+
+async function login() {
+  const email = el('login-email')?.value?.trim();
+  const pass  = el('login-pass')?.value;
+  el('login-msg').className = 'auth-msg';
+  if (!email || !pass) { authMsg('login-msg','err','Enter your email and password.'); return; }
+  authMsg('login-msg','','Signing in…');
+  const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+  if (error) { authMsg('login-msg','err', error.message); return; }
+  // onAuthStateChange will handle the rest
+}
+
+async function forgotPassword() {
+  const email = el('forgot-email')?.value?.trim();
+  el('forgot-msg').className = 'auth-msg';
+  if (!email) { authMsg('forgot-msg','err','Enter your email address.'); return; }
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + window.location.pathname
+  });
+  if (error) { authMsg('forgot-msg','err', error.message); return; }
+  authMsg('forgot-msg','ok','Check your email for a reset link.');
+  el('forgot-email').value = '';
+}
+
+async function setNewPassword() {
+  const pass    = el('setpass-pass')?.value;
+  const confirm = el('setpass-confirm')?.value;
+  el('setpass-msg').className = 'auth-msg';
+  if (!pass || pass.length < 8) { authMsg('setpass-msg','err','Password must be at least 8 characters.'); return; }
+  if (pass !== confirm)          { authMsg('setpass-msg','err','Passwords do not match.'); return; }
+  authMsg('setpass-msg','','Saving…');
+  const { error } = await sb.auth.updateUser({ password: pass, data: { has_password: true } });
+  if (error) { authMsg('setpass-msg','err', error.message); return; }
+  // USER_UPDATED event fires → onAuthStateChange loads the app
+}
+
+async function logout() {
+  closeHMenu();
+  await sb.auth.signOut();
+}
+
+function openInviteSheet() {
+  // Populate org dropdown from PARTNERS list
+  const sel = el('inv-org');
+  if (sel && sel.options.length <= 1) {
+    PARTNERS.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.name; opt.textContent = p.name;
+      sel.appendChild(opt);
+    });
+  }
+  el('inv-msg').className = 'auth-msg';
+  el('inv-email').value = '';
+  openSheet('invite-sheet');
+}
+
+async function sendInvite() {
+  const email = el('inv-email')?.value?.trim();
+  const org   = el('inv-org')?.value;
+  el('inv-msg').className = 'auth-msg';
+  if (!email) { authMsg('inv-msg','err','Enter an email address.'); return; }
+  if (!org)   { authMsg('inv-msg','err','Select an organization.'); return; }
+  authMsg('inv-msg','','Sending sign-in link…');
+  try {
+    const { error } = await sb.auth.signInWithOtp({
+      email,
+      options: { shouldCreateUser: true, data: { org } }
+    });
+    if (error) { authMsg('inv-msg','err', error.message); return; }
+    authMsg('inv-msg','ok','Link sent! They\'ll receive a sign-in email shortly.');
+    el('inv-email').value = ''; el('inv-org').value = '';
+  } catch(e) { authMsg('inv-msg','err','Network error — check your connection.'); }
+}
+
+async function changePassword() {
+  const np  = el('chpass-new')?.value;
+  const cp  = el('chpass-confirm')?.value;
+  const msg = el('chpass-msg');
+  msg.className = 'auth-msg';
+  if (!np || np.length < 8) { msg.className='auth-msg err'; msg.textContent='Password must be at least 8 characters.'; return; }
+  if (np !== cp)             { msg.className='auth-msg err'; msg.textContent='Passwords do not match.'; return; }
+  msg.className='auth-msg'; msg.textContent='Updating…';
+  const { error } = await sb.auth.updateUser({ password: np, data: { has_password: true } });
+  if (error) { msg.className='auth-msg err'; msg.textContent=error.message; return; }
+  msg.className='auth-msg ok'; msg.textContent='Password updated successfully.';
+  el('chpass-new').value=''; el('chpass-confirm').value='';
+  setTimeout(() => closeSheet('chpass-sheet'), 1400);
+  toast('Password updated');
+}
 
 // ============================================================
 // BOOT
@@ -3620,13 +4011,8 @@ window.addEventListener('offline',()=>setConn('offline'));
 window.addEventListener('load', () => {
   initSW();
   initMap();
-  // Populate static content that doesn't need Supabase
-  renderOrgList();
-  populateAllSelects();
-  const dateInput=el('ne-date'); if(dateInput) dateInput.value=today();
   initPTR();
-  // Connect to Supabase — shows retry button if it fails
-  initSupabase();
+  initAuth(); // checks auth, then loads app if signed in
 });
 </script>
 </body>
