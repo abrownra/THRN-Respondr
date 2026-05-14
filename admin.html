@@ -1278,6 +1278,8 @@ function setAdmView(view, btn) {
   document.querySelectorAll('.mnav-tab[data-view="'+view+'"]').forEach(t => t.classList.add('active'));
   // Sync sidebar
   el('nav-' + view)?.classList.add('active');
+
+  if (view === 'admins') loadAdmins();
 }
 
 // ── ADMIN USERS ───────────────────────────────────────
@@ -1348,13 +1350,6 @@ function showInvMsg(type, text) {
   msg.style.background = type === 'err' ? 'rgba(255,59,48,0.1)' : 'rgba(52,199,89,0.1)';
   msg.style.color = type === 'err' ? 'var(--red)' : 'var(--green)';
   msg.textContent = text;
-}
-
-// Patch setAdmView to load admins on demand
-const _origSetAdmView = setAdmView;
-function setAdmView(view, btn) {
-  _origSetAdmView(view, btn);
-  if (view === 'admins') loadAdmins();
 }
 
 // ── BOOT ──────────────────────────────────────────────
