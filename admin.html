@@ -232,6 +232,50 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text'
   .stat-grid{grid-template-columns:1fr 1fr}
   .stat-val{font-size:26px}
 }
+/* ── CASE MANAGEMENT ───────────────────────────── */
+.case-table-wrap{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden}
+.case-table{width:100%;border-collapse:collapse}
+.case-table th{text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;padding:10px 14px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.02);white-space:nowrap}
+.case-table td{padding:11px 14px;border-bottom:0.5px solid var(--border);font-size:13px;color:var(--text);vertical-align:middle}
+.case-table tr:last-child td{border-bottom:none}
+.case-table tr:hover td{background:rgba(0,0,0,0.02);cursor:pointer}
+.case-pill{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap}
+.cp-open{background:rgba(255,149,0,0.12);color:var(--amber)}
+.cp-managing{background:rgba(0,122,255,0.1);color:var(--blue)}
+.cp-mediated{background:rgba(175,82,222,0.1);color:var(--purple)}
+.cp-averted{background:rgba(52,199,89,0.1);color:var(--green)}
+.cp-archived{background:rgba(0,0,0,0.06);color:var(--text3)}
+.day-bar{height:4px;background:rgba(0,0,0,0.06);border-radius:2px;overflow:hidden;width:60px;margin-top:4px}
+.day-fill{height:100%;border-radius:2px}
+.stale-flag{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-left:6px;vertical-align:middle}
+/* ── CASE DRAWER ───────────────────────────────── */
+.drawer-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.4);display:none;justify-content:flex-end}
+.drawer-overlay.open{display:flex}
+.drawer{width:420px;max-width:100vw;background:var(--surface);height:100%;display:flex;flex-direction:column;overflow:hidden;box-shadow:-8px 0 40px rgba(0,0,0,0.15)}
+.drawer-hd{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--navy)}
+.drawer-title{font-size:15px;font-weight:700;color:#fff;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drawer-close{width:30px;height:30px;border-radius:50%;border:none;background:rgba(255,255,255,0.1);color:#fff;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.drawer-body{flex:1;overflow-y:auto;padding:20px}
+.drawer-body::-webkit-scrollbar{width:5px}
+.drawer-body::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:3px}
+.drawer-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0}
+.drawer-section{margin-bottom:20px}
+.drawer-section-title{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px}
+.drawer-field{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border)}
+.drawer-field:last-child{border-bottom:none}
+.drawer-field-lbl{font-size:11px;font-weight:600;color:var(--text3);width:90px;flex-shrink:0;padding-top:1px}
+.drawer-field-val{font-size:13px;color:var(--text);flex:1;line-height:1.4}
+.sstep-btn{padding:6px 12px;border-radius:20px;font-size:11px;font-weight:700;border:1.5px solid var(--border2);background:transparent;cursor:pointer;font-family:inherit;transition:all 0.15s;color:var(--text2)}
+.sstep-btn.current{border-color:var(--accent);background:rgba(245,197,24,0.1);color:var(--accent-dark)}
+.sstep-btn:hover:not(.current){background:rgba(0,0,0,0.04)}
+.adm-btn-primary{flex:1;padding:10px;background:var(--accent);color:var(--navy);border:none;border-radius:8px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
+.adm-btn-secondary{padding:10px 16px;background:rgba(0,0,0,0.06);color:var(--text2);border:none;border-radius:8px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
+.adm-btn-danger{padding:10px 16px;background:rgba(255,59,48,0.08);color:var(--red);border:none;border-radius:8px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
+/* ── AT-RISK WIDGET ────────────────────────────── */
+.atrisk-row{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:0.5px solid var(--border);cursor:pointer}
+.atrisk-row:hover{background:rgba(0,0,0,0.02)}
+.atrisk-row:last-child{border-bottom:none}
+.atrisk-day{font-size:18px;font-weight:700;width:36px;text-align:center;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -296,6 +340,12 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text'
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
         Live Feed
       </div>
+      <div class="adm-nav-section">Cases</div>
+      <div class="adm-nav-item" onclick="setAdmView('cases',this)" id="nav-cases">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Case Management
+        <span class="adm-nav-badge" id="atrisk-badge" style="background:rgba(255,59,48,0.12);color:var(--red)"></span>
+      </div>
       <div class="adm-sidebar-foot">
         <a href="index.html">← Open App</a>
       </div>
@@ -358,6 +408,14 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text'
             <div class="panel-body" id="incident-stats"><div class="loading-row"><div class="spin"></div></div></div>
           </div>
         </div>
+        <div class="panel" id="atrisk-panel" style="margin-bottom:20px;display:none">
+          <div class="panel-hd">
+            <div class="panel-title" style="color:var(--red)">⚠ At-Risk Cases <span id="atrisk-count" style="font-size:11px;font-weight:600;color:var(--red)"></span></div>
+            <button class="panel-action" onclick="setAdmView('cases',document.getElementById('nav-cases'));setCasesFilter('atrisk',document.getElementById('atrisk-ftab'))">See all →</button>
+          </div>
+          <div id="atrisk-list" class="panel-scroll"></div>
+        </div>
+
       </div>
 
       <!-- ORG NETWORK -->
@@ -550,6 +608,43 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text'
         </div>
       </div>
 
+      <!-- CASE MANAGEMENT -->
+      <div class="adm-view" id="view-cases">
+        <div class="page-hd">
+          <div class="page-title">Case Management</div>
+          <div class="page-sub">All cases across the THRN network — manage, reassign, and track progress</div>
+        </div>
+        <div class="search-bar">
+          <input type="search" id="case-search" placeholder="Search cases, names, orgs, workers…" oninput="paintCasesTable()"/>
+          <div class="filter-tabs" style="flex-wrap:wrap;gap:4px">
+            <button class="ftab on" onclick="setCasesFilter('all',this)">All</button>
+            <button class="ftab" onclick="setCasesFilter('open',this)">Open</button>
+            <button class="ftab" onclick="setCasesFilter('managing',this)">Managing</button>
+            <button class="ftab" onclick="setCasesFilter('mediated',this)">Mediated</button>
+            <button class="ftab" onclick="setCasesFilter('atrisk',this)" id="atrisk-ftab" style="color:var(--red)">⚠ At Risk</button>
+            <button class="ftab" onclick="setCasesFilter('averted',this)">Averted</button>
+            <button class="ftab" onclick="setCasesFilter('archived',this)">Archived</button>
+          </div>
+        </div>
+        <div class="case-table-wrap">
+          <table class="case-table">
+            <thead>
+              <tr>
+                <th>Subject</th>
+                <th>Org</th>
+                <th>Status</th>
+                <th>Day / 60</th>
+                <th>Worker</th>
+                <th>Opened</th>
+              </tr>
+            </thead>
+            <tbody id="case-mgmt-tbody">
+              <tr><td colspan="6"><div class="loading-row"><div class="spin"></div></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- LIVE FEED -->
       <div class="adm-view" id="view-activity">
         <div class="page-hd">
@@ -574,6 +669,77 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text'
   </div><!-- /adm-body -->
 </div><!-- /dashboard -->
 
+<!-- Case Detail Drawer -->
+<div class="drawer-overlay" id="case-drawer-overlay" onclick="if(event.target===this)closeAdminCaseDrawer()">
+  <div class="drawer">
+    <div class="drawer-hd">
+      <div class="drawer-title" id="drawer-title">Case Detail</div>
+      <button class="drawer-close" onclick="closeAdminCaseDrawer()">✕</button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-section">
+        <div class="drawer-section-title">Case Status</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap">
+          <button class="sstep-btn" id="dss-open"     onclick="adminSetStatus('open')">Open</button>
+          <button class="sstep-btn" id="dss-managing" onclick="adminSetStatus('managing')">Managing</button>
+          <button class="sstep-btn" id="dss-mediated" onclick="adminSetStatus('mediated')">Mediated</button>
+          <button class="sstep-btn" id="dss-averted"  onclick="adminSetStatus('averted')">Averted</button>
+        </div>
+      </div>
+      <div class="drawer-section">
+        <div class="drawer-section-title">Case Details</div>
+        <div id="drawer-fields"></div>
+      </div>
+      <div class="drawer-section">
+        <div class="drawer-section-title">Primary Organization</div>
+        <div style="display:flex;gap:8px">
+          <select id="drawer-reassign-org" style="flex:1;padding:8px 10px;border:1px solid var(--border2);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);background:var(--surface);outline:none">
+            <option value="">Select org…</option>
+          </select>
+          <button onclick="adminReassignOrg()" style="padding:8px 14px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">Reassign</button>
+        </div>
+      </div>
+      <div class="drawer-section">
+        <div class="drawer-section-title">Contributing Organizations</div>
+        <div id="drawer-contribs" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;min-height:24px"></div>
+        <div style="display:flex;gap:8px">
+          <select id="drawer-add-contrib" style="flex:1;padding:8px 10px;border:1px solid var(--border2);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);background:var(--surface);outline:none">
+            <option value="">Add org to case…</option>
+          </select>
+          <button onclick="adminAddContrib()" style="padding:8px 14px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">Add</button>
+        </div>
+      </div>
+      <div class="drawer-section">
+        <div class="drawer-section-title">Requested Resources</div>
+        <div id="drawer-needs" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px"></div>
+        <div style="display:flex;gap:8px">
+          <select id="drawer-add-need" style="flex:1;padding:8px 10px;border:1px solid var(--border2);border-radius:8px;font-size:12px;font-family:inherit;color:var(--text);background:var(--surface);outline:none">
+            <option value="">Add a resource…</option>
+            <option>Emergency Relief Funds</option>
+            <option>Grief / Loss support</option>
+            <option>Mental Health Support</option>
+            <option>Educational or School-Based Support</option>
+            <option>Respite or safe housing outside of immediate area</option>
+            <option>Family is unsure at this time</option>
+            <option>Other</option>
+          </select>
+          <button onclick="adminAddNeed()" style="padding:8px 14px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">Add</button>
+        </div>
+      </div>
+      <div class="drawer-section">
+        <div class="drawer-section-title">Add Admin Note</div>
+        <textarea id="drawer-note" rows="3" placeholder="Add a note visible to all responders on this case…" style="width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);background:var(--surface);outline:none;resize:vertical"></textarea>
+        <button onclick="adminAddNote()" style="margin-top:8px;padding:8px 16px;background:var(--navy);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer">Save Note</button>
+      </div>
+    </div>
+    <div class="drawer-foot">
+      <button class="adm-btn-primary"   onclick="adminSaveStatus()">Save Status</button>
+      <button class="adm-btn-danger"    onclick="adminArchiveCase()">Archive</button>
+      <button class="adm-btn-secondary" onclick="closeAdminCaseDrawer()">Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- Mobile Nav -->
 <div class="mobile-nav" id="mobile-nav" style="display:none">
   <div class="mobile-nav-inner">
@@ -592,6 +758,10 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text'
     <button class="mnav-tab" onclick="setAdmView('activity',this)" data-view="activity">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
       Feed
+    </button>
+    <button class="mnav-tab" onclick="setAdmView('cases',this)" data-view="cases">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Cases
     </button>
     <button class="mnav-tab" onclick="setAdmView('reports',this)" data-view="reports">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>
@@ -746,7 +916,7 @@ function subscribeRealtime() {
 async function loadAllData() {
   try {
     const [casesRes, incRes, evRes, actRes] = await Promise.all([
-      sb.from('cases').select('id, status, org, created_at, contributors').order('created_at', {ascending:false}),
+      sb.from('cases').select('*').order('created_at', {ascending:false}),
       sb.from('incidents').select('id, status, created_at, incident_type, victims, location').order('created_at', {ascending:false}),
       sb.from('events').select('id, status, organization, event_name, event_date, attendance, created_at').order('event_date', {ascending:false}),
       sb.from('activity').select('*').order('created_at', {ascending:false}).limit(200)
@@ -782,6 +952,8 @@ function renderAll() {
   renderFeed();
   renderPendingList();
   applyReportRange();
+  renderAtRiskWidget();
+  renderAdminCasesView();
 }
 
 // ── OVERVIEW ──────────────────────────────────────────
@@ -969,8 +1141,9 @@ function paintOrgTable() {
     const badgeCls = p.status === 'active' ? 'sb-active' : p.status === 'dormant' ? 'sb-dormant' : 'sb-pending';
     const dotCls   = p.status === 'active' ? 'sd-active' : p.status === 'dormant' ? 'sd-dormant' : 'sd-pending';
     const isPending = p.status === 'pending';
+    const hasAtRisk = allCases.some(c => c.org === p.name && (Math.floor((Date.now()-new Date(c.created_at).getTime())/86400000)) >= 45 && c.status !== 'averted' && c.status !== 'archived');
     return `<tr>
-      <td><div class="org-name">${p.name}</div><div class="org-contact">${p.contact} · ${p.email}</div></td>
+      <td><div class="org-name">${p.name}${hasAtRisk?'<span class="stale-flag" title="Has at-risk case(s) — day 45+"></span>':''}</div><div class="org-contact">${p.contact} · ${p.email}</div></td>
       <td><span class="status-badge ${badgeCls}"><span class="status-dot ${dotCls}"></span>${p.status}</span></td>
       <td><strong>${p.cases}</strong></td>
       <td><strong>${p.events}</strong></td>
@@ -1350,6 +1523,320 @@ function showInvMsg(type, text) {
   msg.style.background = type === 'err' ? 'rgba(255,59,48,0.1)' : 'rgba(52,199,89,0.1)';
   msg.style.color = type === 'err' ? 'var(--red)' : 'var(--green)';
   msg.textContent = text;
+}
+
+// ── CASE MANAGEMENT ──────────────────────────────────
+
+let casesFilter = 'all';
+let currentAdminCase = null;
+
+function liveAdminDay(c) {
+  if (!c.created_at) return 0;
+  return Math.floor((Date.now() - new Date(c.created_at).getTime()) / 86400000);
+}
+
+function renderAtRiskWidget() {
+  const atRisk = allCases.filter(c => {
+    const d = liveAdminDay(c);
+    return d >= 45 && c.status !== 'averted' && c.status !== 'archived';
+  });
+
+  const badge = el('atrisk-badge');
+  if (badge) badge.textContent = atRisk.length > 0 ? atRisk.length : '';
+
+  const panel = el('atrisk-panel');
+  const list  = el('atrisk-list');
+  if (!panel || !list) return;
+
+  if (!atRisk.length) { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+
+  const count = el('atrisk-count');
+  if (count) count.textContent = `(${atRisk.length})`;
+
+  list.innerHTML = atRisk.slice(0, 8).map(c => {
+    const day = liveAdminDay(c);
+    const dayColor = day >= 55 ? 'var(--red)' : 'var(--amber)';
+    const partner = PARTNERS.find(p => p.name === c.org);
+    return `<div class="atrisk-row" onclick="openAdminCaseDrawer('${c.id}')">
+      <div class="atrisk-day" style="color:${dayColor}">${day}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;color:var(--text)">${c.name || 'Anonymous'}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">${c.org || '—'} · ${c.assigned_to || 'No worker assigned'}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <span class="case-pill cp-${c.status || 'open'}">${c.status || 'open'}</span>
+        ${partner ? `<a href="mailto:${partner.email}?subject=THRN Case Follow-Up — ${c.case_id||''}&body=Hi ${partner.contact},%0A%0ACase ${c.case_id||c.id?.slice(0,8)} (${c.name||'client'}) is on day ${day} of 60. Please update the case status in THRN Respondr.%0A%0ATHRN Admin" onclick="event.stopPropagation()" style="font-size:10px;font-weight:700;color:var(--blue);text-decoration:none">Nudge org ↗</a>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderAdminCasesView() {
+  paintCasesTable();
+  ['drawer-reassign-org','drawer-add-contrib'].forEach(id => {
+    const sel = el(id);
+    if (sel && sel.options.length <= 1) {
+      PARTNERS.forEach(p => {
+        const o = document.createElement('option');
+        o.value = p.name; o.textContent = p.name;
+        sel.appendChild(o);
+      });
+    }
+  });
+}
+
+function setCasesFilter(f, btn) {
+  casesFilter = f;
+  document.querySelectorAll('#view-cases .filter-tabs .ftab').forEach(b => b.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  paintCasesTable();
+}
+
+function paintCasesTable() {
+  const search = (el('case-search')?.value || '').toLowerCase();
+  let rows = allCases.filter(c => {
+    const day = liveAdminDay(c);
+    const isAtRisk = day >= 45 && c.status !== 'averted' && c.status !== 'archived';
+    if (casesFilter === 'atrisk') return isAtRisk;
+    if (casesFilter !== 'all') return c.status === casesFilter;
+    return true;
+  });
+  if (search) rows = rows.filter(c =>
+    (c.name||'').toLowerCase().includes(search) ||
+    (c.org||'').toLowerCase().includes(search) ||
+    (c.assigned_to||'').toLowerCase().includes(search) ||
+    (c.case_id||'').toLowerCase().includes(search)
+  );
+
+  const tbody = el('case-mgmt-tbody');
+  if (!tbody) return;
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon">📋</div><div class="empty-lbl">No cases match</div></div></td></tr>';
+    return;
+  }
+
+  const PILL = { open:'cp-open', managing:'cp-managing', mediated:'cp-mediated', averted:'cp-averted', archived:'cp-archived' };
+  tbody.innerHTML = rows.map(c => {
+    const day = liveAdminDay(c);
+    const pct = Math.min(100, Math.round((day / 60) * 100));
+    const barColor = c.status === 'averted' ? 'var(--green)' : c.status === 'archived' ? 'var(--text3)' : day >= 45 ? 'var(--red)' : day >= 30 ? 'var(--amber)' : 'var(--blue)';
+    const pillCls = PILL[c.status] || 'cp-open';
+    const stale = day >= 45 && c.status !== 'averted' && c.status !== 'archived';
+    return `<tr onclick="openAdminCaseDrawer('${c.id}')">
+      <td>
+        <div style="font-size:13px;font-weight:600">${c.name || 'Anonymous'}${stale ? '<span class="stale-flag" title="At risk — 45+ days"></span>' : ''}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:1px">${c.case_id || c.id?.slice(0,8) || '—'}</div>
+      </td>
+      <td style="font-size:12px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c.org||''}">${c.org || '—'}</td>
+      <td><span class="case-pill ${pillCls}">${c.status || 'open'}</span></td>
+      <td>
+        <div style="font-size:12px;font-weight:600;color:${barColor}">Day ${day}</div>
+        <div class="day-bar"><div class="day-fill" style="width:${pct}%;background:${barColor}"></div></div>
+      </td>
+      <td style="font-size:12px;color:var(--text2)">${c.assigned_to || '—'}</td>
+      <td style="font-size:11px;color:var(--text3)">${fmtDate(c.created_at)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function openAdminCaseDrawer(id) {
+  const c = allCases.find(x => x.id === id);
+  if (!c) return;
+  currentAdminCase = { ...c };
+
+  el('drawer-title').textContent = `${c.name || 'Anonymous'} — ${c.case_id || c.id?.slice(0,8) || ''}`;
+
+  ['open','managing','mediated','averted'].forEach(s => {
+    el('dss-' + s)?.classList.toggle('current', c.status === s);
+  });
+
+  const day = liveAdminDay(c);
+  const needs = (() => { try { return JSON.parse(c.needs || '[]'); } catch(e) { return typeof c.needs === 'string' ? [c.needs] : []; } })();
+  const contribs = (() => { try { return JSON.parse(c.contributors || '[]'); } catch(e) { return []; } })();
+
+  const fields = [
+    ['Day',        `${day} of 60`],
+    ['Org',        c.org || '—'],
+    ['Worker',     c.assigned_to || '—'],
+    ['Phone',      c.phone ? `<a href="tel:${(c.phone||'').replace(/\D/g,'')}" style="color:var(--blue)">${c.phone}</a>` : '—'],
+    ['Address',    c.address || '—'],
+    ['Emergency',  c.emergency_contact || '—'],
+    ['Age/Gender', [c.age ? `Age ${c.age}` : '', c.gender || ''].filter(Boolean).join(' · ') || '—'],
+    ['Relation',   c.relationship_to_incident || '—'],
+    ['Opened',     fmtDate(c.created_at)],
+    ['Notes',      c.notes_initial || '—'],
+  ];
+
+  el('drawer-fields').innerHTML = fields.map(([lbl, val]) =>
+    `<div class="drawer-field"><div class="drawer-field-lbl">${lbl}</div><div class="drawer-field-val">${val}</div></div>`
+  ).join('');
+
+  if (el('drawer-note')) el('drawer-note').value = '';
+  const sel = el('drawer-reassign-org');
+  if (sel) sel.value = c.org || '';
+  if (el('drawer-add-contrib')) el('drawer-add-contrib').value = '';
+  renderDrawerContribs(contribs);
+  renderDrawerNeeds(needs);
+
+  el('case-drawer-overlay').classList.add('open');
+}
+
+function parseAdminNeeds(n) {
+  if (Array.isArray(n)) return n;
+  try { return JSON.parse(n || '[]'); } catch(e) { return []; }
+}
+
+function renderDrawerNeeds(needs) {
+  const box = el('drawer-needs'); if (!box) return;
+  if (!needs.length) {
+    box.innerHTML = '<span style="font-size:12px;color:var(--text3)">No resources requested yet</span>';
+    return;
+  }
+  box.innerHTML = needs.map(r =>
+    `<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border2);border-radius:8px;background:rgba(0,0,0,0.02)">
+      <div style="flex:1;font-size:13px;font-weight:500;color:var(--text)">${r}</div>
+      <button onclick="adminMarkNeedAdministered('${r.replace(/'/g,"\\'")}')" title="Mark as administered" style="padding:4px 10px;background:rgba(52,199,89,0.1);color:var(--green);border:1px solid rgba(52,199,89,0.25);border-radius:20px;font-size:10px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap">✓ Done</button>
+      <button onclick="adminRemoveNeed('${r.replace(/'/g,"\\'")}')" title="Remove resource" style="padding:4px 8px;background:rgba(255,59,48,0.08);color:var(--red);border:1px solid rgba(255,59,48,0.15);border-radius:20px;font-size:10px;font-weight:700;font-family:inherit;cursor:pointer">✕</button>
+    </div>`
+  ).join('');
+}
+
+async function adminAddNeed() {
+  if (!currentAdminCase) return;
+  const resource = el('drawer-add-need').value;
+  if (!resource) { toast('Select a resource'); return; }
+  const needs = parseAdminNeeds(currentAdminCase.needs);
+  if (needs.includes(resource)) { toast('Already on the list'); return; }
+  needs.push(resource);
+  const { error } = await sb.from('cases').update({ needs: JSON.stringify(needs), updated_at: new Date().toISOString() }).eq('id', currentAdminCase.id);
+  if (error) { toast('Error: ' + error.message); return; }
+  currentAdminCase.needs = JSON.stringify(needs);
+  el('drawer-add-need').value = '';
+  renderDrawerNeeds(needs);
+  toast(`"${resource}" added`);
+  loadAllData();
+}
+
+async function adminRemoveNeed(resource) {
+  if (!currentAdminCase) return;
+  const needs = parseAdminNeeds(currentAdminCase.needs).filter(r => r !== resource);
+  const { error } = await sb.from('cases').update({ needs: JSON.stringify(needs), updated_at: new Date().toISOString() }).eq('id', currentAdminCase.id);
+  if (error) { toast('Error: ' + error.message); return; }
+  currentAdminCase.needs = JSON.stringify(needs);
+  renderDrawerNeeds(needs);
+  toast(`"${resource}" removed`);
+  loadAllData();
+}
+
+async function adminMarkNeedAdministered(resource) {
+  if (!currentAdminCase) return;
+  const { error } = await sb.from('case_notes').insert({
+    case_id: currentAdminCase.id,
+    author: adminUser?.email || 'Admin',
+    org: 'THRN Admin',
+    note: `✓ Resource administered: ${resource}`
+  });
+  if (error) { toast('Error: ' + error.message); return; }
+  await sb.from('activity').insert([{ org: 'THRN Admin', org_color: '#34c759', message: `"${resource}" marked administered (${currentAdminCase.case_id || currentAdminCase.id?.slice(0,8)})`, type: 'case_update' }]);
+  toast(`✓ "${resource}" marked as administered`);
+}
+
+function renderDrawerContribs(contribs) {
+  const box = el('drawer-contribs'); if (!box) return;
+  if (!contribs.length) {
+    box.innerHTML = '<span style="font-size:12px;color:var(--text3)">No contributing orgs yet</span>';
+    return;
+  }
+  box.innerHTML = contribs.map(org =>
+    `<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;background:rgba(0,122,255,0.08);color:var(--blue);border:1px solid rgba(0,122,255,0.15)">
+      ${org}
+      <button onclick="adminRemoveContrib('${org.replace(/'/g,"\\'")}')" title="Remove" style="background:none;border:none;cursor:pointer;color:inherit;font-size:13px;line-height:1;padding:0;margin-left:2px;opacity:0.6">✕</button>
+    </span>`
+  ).join('');
+}
+
+async function adminAddContrib() {
+  if (!currentAdminCase) return;
+  const org = el('drawer-add-contrib').value;
+  if (!org) { toast('Select an organization'); return; }
+  const contribs = (() => { try { return JSON.parse(currentAdminCase.contributors || '[]'); } catch(e) { return []; } })();
+  if (contribs.includes(org)) { toast(`${org} is already on this case`); return; }
+  contribs.push(org);
+  const { error } = await sb.from('cases').update({ contributors: JSON.stringify(contribs), updated_at: new Date().toISOString() }).eq('id', currentAdminCase.id);
+  if (error) { toast('Error: ' + error.message); return; }
+  currentAdminCase.contributors = JSON.stringify(contribs);
+  el('drawer-add-contrib').value = '';
+  renderDrawerContribs(contribs);
+  toast(`${org} added to case`);
+  loadAllData();
+}
+
+async function adminRemoveContrib(org) {
+  if (!currentAdminCase) return;
+  const contribs = (() => { try { return JSON.parse(currentAdminCase.contributors || '[]'); } catch(e) { return []; } })();
+  const updated = contribs.filter(o => o !== org);
+  const { error } = await sb.from('cases').update({ contributors: JSON.stringify(updated), updated_at: new Date().toISOString() }).eq('id', currentAdminCase.id);
+  if (error) { toast('Error: ' + error.message); return; }
+  currentAdminCase.contributors = JSON.stringify(updated);
+  renderDrawerContribs(updated);
+  toast(`${org} removed from case`);
+  loadAllData();
+}
+
+function closeAdminCaseDrawer() {
+  el('case-drawer-overlay').classList.remove('open');
+  currentAdminCase = null;
+}
+
+function adminSetStatus(s) {
+  if (!currentAdminCase) return;
+  ['open','managing','mediated','averted'].forEach(st => {
+    el('dss-' + st)?.classList.toggle('current', st === s);
+  });
+  currentAdminCase._pendingStatus = s;
+}
+
+async function adminSaveStatus() {
+  if (!currentAdminCase) return;
+  const newStatus = currentAdminCase._pendingStatus || currentAdminCase.status;
+  if (newStatus === currentAdminCase.status && !currentAdminCase._pendingStatus) { toast('No status change'); return; }
+  const { error } = await sb.from('cases').update({ status: newStatus, updated_at: new Date().toISOString() }).eq('id', currentAdminCase.id);
+  if (error) { toast('Error: ' + error.message); return; }
+  toast(`Status → ${newStatus}`);
+  closeAdminCaseDrawer();
+  await loadAllData();
+}
+
+async function adminReassignOrg() {
+  if (!currentAdminCase) return;
+  const newOrg = el('drawer-reassign-org').value;
+  if (!newOrg) { toast('Select an organization'); return; }
+  const { error } = await sb.from('cases').update({ org: newOrg, updated_at: new Date().toISOString() }).eq('id', currentAdminCase.id);
+  if (error) { toast('Error: ' + error.message); return; }
+  toast(`Reassigned to ${newOrg}`);
+  closeAdminCaseDrawer();
+  await loadAllData();
+}
+
+async function adminAddNote() {
+  if (!currentAdminCase) return;
+  const note = el('drawer-note').value.trim();
+  if (!note) { toast('Enter a note first'); return; }
+  const { error } = await sb.from('case_notes').insert({ case_id: currentAdminCase.id, note, author: adminUser?.email || 'Admin', created_at: new Date().toISOString() });
+  if (error) { toast('Error saving note: ' + error.message); return; }
+  el('drawer-note').value = '';
+  toast('Note saved');
+}
+
+async function adminArchiveCase() {
+  if (!currentAdminCase) return;
+  if (!confirm(`Archive case for ${currentAdminCase.name || 'this client'}?`)) return;
+  const { error } = await sb.from('cases').update({ status: 'archived', updated_at: new Date().toISOString() }).eq('id', currentAdminCase.id);
+  if (error) { toast('Error: ' + error.message); return; }
+  toast('Case archived');
+  closeAdminCaseDrawer();
+  await loadAllData();
 }
 
 // ── BOOT ──────────────────────────────────────────────

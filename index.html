@@ -1040,6 +1040,10 @@ textarea.fi{resize:none}
       <div class="fg"><div class="fl">Incident</div><div style="font-size:14px;font-weight:700" id="cs-inc">—</div></div>
     </div>
     <div class="fg"><div class="fl">Opened by</div><div style="font-size:13px;font-weight:700" id="cs-org">—</div></div>
+    <div class="fg" id="cs-contact-section">
+      <div class="fl" style="margin-bottom:8px">Subject contact info</div>
+      <div id="cs-contact-rows" style="display:flex;flex-direction:column;gap:7px"></div>
+    </div>
     <div class="fg">
       <div class="fl" style="margin-bottom:6px">Organizations contributing</div>
       <div id="cs-contribs" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px"></div>
@@ -2081,12 +2085,14 @@ function openCase(c) {
   currentCaseId=c.id; currentCaseData=c; currentStatus=c.status||'open';
   el('cs-title').textContent=`${c.name||'Case'} — ${c.case_id||c.id?.slice(0,8)||''}`;
   el('cs-id').textContent=c.case_id||c.id?.slice(0,8)||'—';
-  el('cs-inc').textContent=c.incident_ref||'—';
+  const incMatch=allIncidents.find(i=>i.id===c.incident_ref);
+  el('cs-inc').textContent=incMatch?`${incMatch.incident_type||'Incident'} · ${simplifyAddress(incMatch.location)||''}` : (c.incident_ref==='other'?'Other / Unknown':c.incident_ref||'—');
   el('cs-org').textContent=c.org||'—';
   el('cs-day').textContent=liveDay(c);
   el('cs-prog').style.width=Math.min(100,Math.round((liveDay(c)/60)*100))+'%';
   el('cs-rem').textContent=(60-liveDay(c))+' left';
   renderStatusBar(currentStatus);
+  renderCaseContactInfo(c);
   const contribs=Array.isArray(c.contributors)?c.contributors:(typeof c.contributors==='string'?JSON.parse(c.contributors||'[]'):[]);
   if(c.org&&!contribs.includes(c.org)) contribs.unshift(c.org);
   renderContribs(contribs);
@@ -2114,6 +2120,23 @@ function renderStatusBar(status) {
 }
 
 function setStatus(s){currentStatus=s;renderStatusBar(s);toast(`Status → ${STATUSES[s]?.label||s}`);}
+
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function renderCaseContactInfo(c) {
+  const rows=el('cs-contact-rows'); if(!rows) return;
+  const sec=el('cs-contact-section'); if(!sec) return;
+  const items=[];
+  const demo=[c.age?`Age ${c.age}`:'',c.gender||''].filter(Boolean).join(' · ');
+  if(demo) items.push(`<div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">👤</span><span style="font-size:13px;color:var(--text2)">${escHtml(demo)}</span></div>`);
+  if(c.relationship_to_incident) items.push(`<div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">🔗</span><span style="font-size:13px;color:var(--text2)">${escHtml(c.relationship_to_incident)}</span></div>`);
+  if(c.phone) items.push(`<div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">📞</span><a href="tel:${c.phone.replace(/\D/g,'')}" style="font-size:13px;font-weight:600;color:var(--blue);text-decoration:none">${escHtml(c.phone)}</a></div>`);
+  if(c.address) items.push(`<div style="display:flex;align-items:flex-start;gap:8px"><span style="font-size:16px">📍</span><a href="https://maps.apple.com/?q=${encodeURIComponent(c.address)}" style="font-size:13px;font-weight:500;color:var(--blue);text-decoration:none;line-height:1.4">${escHtml(c.address)}</a></div>`);
+  if(c.emergency_contact) items.push(`<div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">🆘</span><span style="font-size:13px;color:var(--text2)"><strong style="color:var(--text)">Emergency:</strong> ${escHtml(c.emergency_contact)}</span></div>`);
+  if(c.assigned_to) items.push(`<div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">🧑‍💼</span><span style="font-size:13px;color:var(--text2)"><strong style="color:var(--text)">Worker:</strong> ${escHtml(c.assigned_to)}</span></div>`);
+  if(items.length){rows.innerHTML=items.join('');sec.style.display='';}
+  else{sec.style.display='none';}
+}
+
 
 function renderContribs(orgs) {
   const e=el('cs-contribs'); if(!e) return;
